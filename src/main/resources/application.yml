@@ -1,0 +1,10 @@
+server:
+  port: 8290
+  servlet:
+    context-path: /
+spring:
+  main:
+    banner-mode: off
+  output:
+    ansi:
+      enabled: always

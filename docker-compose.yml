@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  service-db:
+    container_name: cm_db
+    image: postgres:16
+    environment:
+      POSTGRES_DB: cm
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root_pass
+    volumes:
+      - cm-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+volumes:
+  cm-data: { }
+
+networks:
+  backend:
+    name: backend
+    external: true
+    driver: bridge
