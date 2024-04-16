@@ -10,6 +10,14 @@ services:
       - 8290:8290
     environment:
       - SERVER_PORT= 8290
+  frontend:
+    image: frontend-nextjs
+    container_name: frontend
+    build:
+      context: ./front
+      dockerfile: Dockerfile.front
+    ports:
+      - 8080:3000
 
 networks:
   backend:
