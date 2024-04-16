@@ -2,9 +2,27 @@ server:
   port: 8290
   servlet:
     context-path: /
+logging:
+  level:
+    root: DEBUG
 spring:
   main:
     banner-mode: off
   output:
     ansi:
       enabled: always
+  liquibase:
+    enabled: true
+    change-log: classpath:liquibase/master.xml
+  datasource:
+    #url: jdbc:postgresql://host.docker.internal:5432/mars-db
+    url: jdbc:postgresql://localhost:5432/mars-db
+    username: root
+    password: root_pass
+    driver-class-name: org.postgresql.Driver
+    sql-script-encoding: UTF-8
+    connectionProperties: useUnicode=true;characterEncoding=utf-8;
+    jpa:
+      properties:
+        hibernate:
+          generate_statistics: true
