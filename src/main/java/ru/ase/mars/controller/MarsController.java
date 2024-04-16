@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ase.mars.entity.EmployeeEntity;
 import ru.ase.mars.entity.TimeEntity;
+import ru.ase.mars.enums.Roles;
+import ru.ase.mars.repository.EmployeeRepository;
 import ru.ase.mars.repository.ReportRepository;
 import ru.ase.mars.entity.ReportEntity;
 import ru.ase.mars.enums.Statuses;
@@ -28,6 +31,8 @@ public class MarsController {
 
     private TimeRepository timeRepository;
 
+    private EmployeeRepository employeeRepository;
+
     @GetMapping(path = "/")
     public ResponseEntity<Object> healthCheck() {
         return ResponseEntity.ok("Just do it");
@@ -35,8 +40,10 @@ public class MarsController {
 
     @GetMapping(path = "/report/list")
     public ResponseEntity<List<ReportEntity>> list() {
-        //todo scientist must get only his reports, inspector get all
-        List<ReportEntity> reports = reportRepository.findAll();
+        EmployeeEntity employee = employeeRepository.getByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<ReportEntity> reports = employee.getRole().equals(Roles.INSPECTOR) ?
+                reportRepository.findAll() :
+                reportRepository.findByAuthor(employee.getName());
         return ResponseEntity.ok(reports);
     }
 
@@ -45,20 +52,20 @@ public class MarsController {
         newReport.setLastUpdated(LocalDateTime.now());
         newReport.setAuthor(SecurityContextHolder.getContext().getAuthentication().getName());
         newReport.setState(Statuses.CREATE);
-        newReport.setFile(file.getName());
+        //newReport.setFile(file.getName());
         ReportEntity report = reportRepository.save(newReport);
         return ResponseEntity.ok(report);
     }
 
     @GetMapping(path = "/report/{id}")
     public ResponseEntity<ReportEntity> get(@PathVariable("id") Integer id) {
-        ReportEntity report = reportRepository.getReferenceById(id);
+        ReportEntity report = reportRepository.findById(id).orElseThrow();
         return ResponseEntity.ok(report);
     }
 
     @GetMapping(path = "/report/{id}/file")
     public ResponseEntity<Resource> download(@PathVariable("id") Integer id) {
-        ReportEntity report = reportRepository.getReferenceById(id);
+        ReportEntity report = reportRepository.findById(id).orElseThrow();
         ByteArrayResource resource = new ByteArrayResource(new byte[0]);
 
         return ResponseEntity.ok()
@@ -68,9 +75,9 @@ public class MarsController {
 
     @PutMapping(path = "/report/{id}")
     public ResponseEntity<ReportEntity> edit(@PathVariable("id") Integer id, @RequestBody String title, MultipartFile file) {
-        ReportEntity report = reportRepository.getReferenceById(id);
+        ReportEntity report = reportRepository.findById(id).orElseThrow();
         report.setTitle(title);
-        report.setFile(file.getName());
+        //report.setFile(file.getName());
         report.setLastUpdated(LocalDateTime.now());
         report.setState(Statuses.CREATE);
         report = reportRepository.save(report);
@@ -82,7 +89,7 @@ public class MarsController {
 
     @PostMapping(path = "/report/{id}/approve")
     public ResponseEntity<ReportEntity> approve(@PathVariable("id") Integer id) {
-        ReportEntity report = reportRepository.getReferenceById(id);
+        ReportEntity report = reportRepository.findById(id).orElseThrow();
         report.setState(Statuses.APPROVE);
         report = reportRepository.save(report);
 
@@ -91,7 +98,7 @@ public class MarsController {
 
     @PostMapping(path = "/report/{id}/reject")
     public ResponseEntity<ReportEntity> reject(@PathVariable("id") Integer id, @RequestBody String comment) {
-        ReportEntity report = reportRepository.getReferenceById(id);
+        ReportEntity report = reportRepository.findById(id).orElseThrow();
         report.setState(Statuses.REJECT);
         report.setComment(comment);
         report = reportRepository.save(report);
