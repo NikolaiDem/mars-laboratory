@@ -14,11 +14,10 @@
   <name>mars-lab</name>
   <description>mars-lab</description>
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <product.version>1.2.7</product.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
-    <enovia.release>20x.5</enovia.release>
     <maven.deploy.plugin.version>3.0.0</maven.deploy.plugin.version>
     <org.mapstruct.version>1.5.0.Beta1</org.mapstruct.version>
     <jar.name>mars-lab</jar.name>
