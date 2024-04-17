@@ -33,18 +33,19 @@ public class MarsService {
 
     public Report add(ReportDto reportDto, EmployeeEntity user, MultipartFile multipartFile) {
         String fileUuid = saveFile(multipartFile);
-        Report report = mapToReportDto(reportDto, fileUuid);
+        Report report = mapToReportDto(reportDto, fileUuid, multipartFile.getName());
         report.setAuthor(user);
         return reportRepository.save(report);
     }
 
     @NotNull
-    private Report mapToReportDto(ReportDto reportDto, String fileUuid) {
+    private Report mapToReportDto(ReportDto reportDto, String fileUuid, String fileName) {
         Report report = new Report();
         report.setLastUpdated(LocalDateTime.now());
         report.setState(Statuses.CREATE);
         report.setTitle(reportDto.getTitle());
         report.setFileUuid(fileUuid);
+        report.setFileName(fileName);
         return report;
     }
 
@@ -88,6 +89,7 @@ public class MarsService {
                 String fileUuid = saveFile(multipartFile);
                 report.setTitle(reportDto.getTitle());
                 report.setFileUuid(fileUuid);
+                report.setFileName(multipartFile.getName());
                 report.setLastUpdated(LocalDateTime.now());
 
                 return reportRepository.save(report);

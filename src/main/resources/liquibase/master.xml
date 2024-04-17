@@ -6,4 +6,7 @@
     <changeSet id="2" author="user">
         <sqlFile encoding="utf8" path="2.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="true"/>
     </changeSet>
+    <changeSet id="3" author="user">
+        <sqlFile encoding="utf8" path="3.sql" relativeToChangelogFile="true" splitStatements="true" stripComments="true"/>
+    </changeSet>
 </databaseChangeLog>

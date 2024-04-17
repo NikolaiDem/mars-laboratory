@@ -103,7 +103,7 @@ public class MarsController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment; filename=report.txt")
+                .header("Content-Disposition", "attachment; filename=" + report.getFileName())
                 .body(resource);
     }
 
