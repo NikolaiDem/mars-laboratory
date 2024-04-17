@@ -77,6 +77,7 @@ export function useAxios<
           signal: controllerRef.current.signal,
           data: payload,
           method: method || "get",
+          withCredentials: true,
           url,
         });
 

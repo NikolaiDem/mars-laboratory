@@ -1,7 +1,11 @@
+"use client";
 import useSWR, { SWRConfiguration, SWRResponse } from "swr";
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 
 export type GetRequest = AxiosRequestConfig | null;
+
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_CLIENT_URL;
+export const api = axios.create({ baseURL: BASE_URL });
 
 interface Return<Data, Error>
   extends Pick<

@@ -2,6 +2,7 @@
 import { useAxios } from "@/context/axiosContext";
 import useRequest from "@/hooks/useRequest";
 import { IReport } from "@/types/types";
+import { FileExclamationOutlined, FileOutlined } from "@ant-design/icons";
 import { Button, Space, Upload } from "antd";
 import Form, { useForm } from "antd/es/form/Form";
 import FormItem from "antd/es/form/FormItem";
@@ -9,6 +10,7 @@ import Input from "antd/es/input/Input";
 import Title from "antd/es/typography/Title";
 
 import React, { FC } from "react";
+import { useState } from "react";
 
 interface Props {
   type: "edit" | "create";
@@ -17,23 +19,46 @@ interface Props {
 }
 
 const ReportFrom: FC<Props> = ({ type }) => {
-  const [form] = useForm();
+  const [name, setName] = useState<string>("");
+  const [file, setFile] = useState<File>();
+
   return (
     <>
-      <Space>
+      <Space
+        direction="vertical"
+        className="w-full h-[100vh] flex justify-center items-center"
+      >
+        <Title>Создание отчета</Title>
         <Form>
           <FormItem label="Имя отчета">
-            <Input placeholder="Имя отчета" />
+            <Input
+              value={name}
+              onChange={({ target: { value } }) => setName(value)}
+              placeholder="Имя отчета"
+            />
           </FormItem>
           <FormItem label="Файл отчета">
             <Upload
               multiple={false}
-              customRequest={(cal) => {
-                console.log(cal);
+              customRequest={({}) => {
+                // console.log({ fi });
+                // setFile()
               }}
-              onChange={() => {}}
+              progress={{ showInfo: false }}
+              fileList={[]}
+              onChange={(info) => {
+                console.log({ info });
+                // setFile(info.file);
+              }}
             >
-              <Button>Загрузить файл отчета</Button>
+              {file ? (
+                <Space>
+                  <FileOutlined />
+                  {file.name}
+                </Space>
+              ) : (
+                <Button>Прикрепить файл</Button>
+              )}
             </Upload>
           </FormItem>
           <FormItem wrapperCol={{ offset: 6, span: 16 }}>

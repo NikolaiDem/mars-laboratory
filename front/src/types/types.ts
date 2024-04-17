@@ -4,7 +4,7 @@ export interface IReport {
   lastUpdated: string;
   author: { id: string; name: string };
   state: EnumReportStatus;
-  file: string;
+  file: { name: string; fileName: string };
   comment: string;
 }
 

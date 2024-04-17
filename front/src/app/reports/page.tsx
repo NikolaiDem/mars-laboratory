@@ -4,7 +4,7 @@ import Layout, { Content, Header } from "antd/es/layout/layout";
 import { NextPage } from "next";
 import Title from "antd/es/typography/Title";
 import ReportList from "../../component/ReportList";
-import { Button, Flex, Modal, Space } from "antd";
+import { Button, Flex, Modal, Space, Upload } from "antd";
 import { useRouter } from "next/navigation";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import ReportFrom from "@/component/ReportFrom";
@@ -24,6 +24,9 @@ const Page: NextPage<Props> = ({}) => {
           <Button onClick={() => router.push("/reports/create")} type="primary">
             Создать отчет
           </Button>
+          <Upload accept="json">
+            <Button>Загрузить периодов</Button>
+          </Upload>
         </Space>
       </Flex>
       <Content>
