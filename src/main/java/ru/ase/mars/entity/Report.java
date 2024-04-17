@@ -34,6 +34,7 @@ public class Report {
     private EmployeeEntity author;
     @Enumerated(EnumType.STRING)
     private Statuses state;
-    private String file;
+    private String fileUuid;
+    private String fileName;
     private String comment;
 }

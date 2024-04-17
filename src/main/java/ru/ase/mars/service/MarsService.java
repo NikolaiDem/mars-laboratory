@@ -1,14 +1,18 @@
 package ru.ase.mars.service;
 
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
+
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +44,7 @@ public class MarsService {
         report.setLastUpdated(LocalDateTime.now());
         report.setState(Statuses.CREATE);
         report.setTitle(reportDto.getTitle());
-        report.setFile(fileUuid);
+        report.setFileUuid(fileUuid);
         return report;
     }
 
@@ -63,6 +67,19 @@ public class MarsService {
         return fileUuid;
     }
 
+    public byte[] download(String fileId) {
+        try (InputStream obj = minioClient
+                .getObject(GetObjectArgs.builder()
+                        .bucket("bucket1")
+                        .object(fileId)
+                        .build())) {
+
+            return IOUtils.toByteArray(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Report edit(ReportDto reportDto, MultipartFile multipartFile) {
         return reportRepository.findById(reportDto.getId())
             .filter(report -> Statuses.CREATE == report.getState()
@@ -70,7 +87,7 @@ public class MarsService {
             .map(report -> {
                 String fileUuid = saveFile(multipartFile);
                 report.setTitle(reportDto.getTitle());
-                report.setFile(fileUuid);
+                report.setFileUuid(fileUuid);
                 report.setLastUpdated(LocalDateTime.now());
 
                 return reportRepository.save(report);

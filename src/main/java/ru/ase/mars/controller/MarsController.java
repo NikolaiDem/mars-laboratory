@@ -93,10 +93,12 @@ public class MarsController {
     @GetMapping(path = "/report/{id}/file")
     public ResponseEntity<Resource> download(@PathVariable("id") Integer id) {
         Report report = reportRepository.findById(id).orElseThrow();
-        ByteArrayResource resource = new ByteArrayResource(new byte[0]);
+        byte[] file = marsService.download(report.getFileUuid());
+        ByteArrayResource resource = new ByteArrayResource(file);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=report.txt")
                 .body(resource);
     }
 
