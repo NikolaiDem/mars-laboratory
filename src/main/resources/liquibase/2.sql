@@ -1,0 +1,1 @@
+alter table report add file_uuid VARCHAR(100);
