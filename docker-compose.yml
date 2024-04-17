@@ -16,6 +16,8 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile.front
+    environment:
+      - NEXT_PUBLIC_BACKEND_CLIENT_URL=http://localhost:8290
     ports:
       - 8080:3000
 

@@ -1,14 +1,22 @@
 export interface IReport {
-    title: string
-			date: string,
-			user: string,
-			status: EnumReportStatus
+  id: string;
+  title: string;
+  lastUpdated: string;
+  author: { id: string; name: string };
+  state: EnumReportStatus;
+  file: string;
+  comment: string;
+}
 
+export interface IUser {
+  name: string;
 }
 
 export enum EnumReportStatus {
-    CREATE = "CREATE",
-    APPROVE=  "APPROVE",
-    REJECT =  "REJECT",
-    SEND = "SEND",
+  CREATE = "CREATE",
+  APPROVE = "APPROVE",
+  REJECT = "REJECT",
+  SEND = "SEND",
 }
+
+export type IReortForm = Omit<IReport, "">;
