@@ -26,7 +26,7 @@ const ReportList: FC<Props> = () => {
       key: "lastUpdated",
     },
   ];
-  return <Table dataSource={data || []} loading={loaded} columns={column} />;
+  return <Table dataSource={data || []} loading={!loaded} columns={column} />;
 };
 
 export default ReportList;
