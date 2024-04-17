@@ -1,23 +1,37 @@
 version: "3.9"
 services:
-  client-backend:
-    image: mars-back-image
-    container_name: mars-back
-    build:
-      context: .
-      dockerfile: DockerfileBack
-    ports:
-      - 8290:8290
+  service-db:
+    container_name: mars-db
+    image: postgres:16
     environment:
-      - SERVER_PORT= 8290
-  frontend:
-    image: frontend-nextjs
-    container_name: frontend
-    build:
-      context: ./front
-      dockerfile: Dockerfile.front
+      POSTGRES_DB: mars-db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root_pass
+    volumes:
+      - mars-data:/var/lib/postgresql/data-mars
     ports:
-      - 8080:3000
+      - "5432:5432"
+    networks:
+      - backend
+
+  minio:
+    image: docker.io/bitnami/minio:2022
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: "user1"
+      MINIO_ROOT_PASSWORD: "password1"
+      MINIO_DEFAULT_BUCKETS: bucket1
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - backend
+
+volumes:
+  mars-data: { }
+  minio-data: { }
 
 networks:
   backend:

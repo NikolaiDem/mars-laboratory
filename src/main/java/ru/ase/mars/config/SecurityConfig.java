@@ -1,7 +1,8 @@
-package ru.ase.mars.security;
+package ru.ase.mars.config;
 
 import jakarta.servlet.DispatcherType;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collections;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -19,19 +20,13 @@ import ru.ase.mars.entity.EmployeeEntity;
 import ru.ase.mars.enums.Roles;
 import ru.ase.mars.repository.EmployeeRepository;
 
-import java.util.Collections;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     private EmployeeRepository employeeRepository;
-
-    @Autowired
-    public SecurityConfig(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
-    }
 
     private void createUsers(PasswordEncoder encoder) {
         EmployeeEntity sci1 = new EmployeeEntity();
