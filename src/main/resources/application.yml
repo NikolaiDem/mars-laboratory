@@ -15,8 +15,8 @@ spring:
     enabled: true
     change-log: classpath:liquibase/master.xml
   datasource:
-    #url: jdbc:postgresql://host.docker.internal:5432/mars-db
-    url: jdbc:postgresql://localhost:5432/mars-db
+    url: jdbc:postgresql://host.docker.internal:5432/mars-db
+    #url: jdbc:postgresql://localhost:5432/mars-db
     username: root
     password: root_pass
     driver-class-name: org.postgresql.Driver
@@ -27,8 +27,8 @@ spring:
         hibernate:
           generate_statistics: true
     minio:
-      #url: http://host.docker.internal:9000
-      url: http://localhost:9000
+      url: http://host.docker.internal:9000
+      #url: http://localhost:9000
       bucket: bucket1
       username: user1
       password: password1

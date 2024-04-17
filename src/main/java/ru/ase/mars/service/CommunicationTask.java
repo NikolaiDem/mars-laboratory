@@ -27,8 +27,13 @@ public class CommunicationTask {
                     .ifPresent(entity -> {
                         entity.setState(Statuses.SEND);
                         reportRepository.save(entity);
-                        log.debug("Sent {} report", entity.getId());
+                        log.debug("Sent report with id {}", entity.getId());
                     });
+                try {
+                    Thread.sleep(60000);
+                } catch (Exception e) {
+                    log.error("Unable to sleep for 1 minute");
+                }
                 restTime = toDate.minusNanos(LocalDateTime.now().getNano());
             }
 

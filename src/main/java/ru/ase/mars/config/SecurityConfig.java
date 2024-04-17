@@ -30,21 +30,18 @@ public class SecurityConfig {
 
     private void createUsers(PasswordEncoder encoder) {
         EmployeeEntity sci1 = new EmployeeEntity();
-        sci1.setId(0);
         sci1.setName("sci1");
         sci1.setPassword(encoder.encode("123"));
         sci1.setRole(Roles.SCIENTIST);
         employeeRepository.save(sci1);
 
         EmployeeEntity sci2 = new EmployeeEntity();
-        sci2.setId(1);
         sci2.setName("sci2");
         sci2.setPassword(encoder.encode("456"));
         sci2.setRole(Roles.SCIENTIST);
         employeeRepository.save(sci2);
 
         EmployeeEntity ins = new EmployeeEntity();
-        ins.setId(2);
         ins.setName("ins1");
         ins.setPassword(encoder.encode("789"));
         ins.setRole(Roles.INSPECTOR);

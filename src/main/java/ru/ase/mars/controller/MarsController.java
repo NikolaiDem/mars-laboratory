@@ -26,11 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.ase.mars.dto.PeriodDto;
 import ru.ase.mars.dto.ReportDto;
+import ru.ase.mars.dto.ReportResponse;
 import ru.ase.mars.entity.EmployeeEntity;
 import ru.ase.mars.entity.Period;
 import ru.ase.mars.entity.Report;
 import ru.ase.mars.enums.Roles;
 import ru.ase.mars.enums.Statuses;
+import ru.ase.mars.mapper.ReportMapper;
 import ru.ase.mars.repository.CustomReportRepository;
 import ru.ase.mars.repository.EmployeeRepository;
 import ru.ase.mars.repository.ReportRepository;
@@ -52,6 +54,7 @@ public class MarsController {
     private ObjectMapper objectMapper;
 
     private EmployeeRepository employeeRepository;
+    private ReportMapper reportMapper;
 
     @GetMapping(path = "/")
     public ResponseEntity<Object> healthCheck() {
@@ -59,12 +62,12 @@ public class MarsController {
     }
 
     @GetMapping(path = "/report/list")
-    public ResponseEntity<List<Report>> list(@RequestParam(required = false) String sortField,
-                                             @RequestParam(required = false) String sortOrder,
-                                             @RequestParam(required = false) Integer authorId,
-                                             @RequestParam(required = false) String state,
-                                             @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "3") int size) {
+    public ResponseEntity<List<ReportResponse>> list(@RequestParam(required = false) String sortField,
+                                                     @RequestParam(required = false) String sortOrder,
+                                                     @RequestParam(required = false) Integer authorId,
+                                                     @RequestParam(required = false) String state,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "3") int size) {
         EmployeeEntity employee = employeeRepository.getByName(SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (!employee.getRole().equals(Roles.INSPECTOR)) {
@@ -73,21 +76,23 @@ public class MarsController {
 
         PageRequest pageable = PageRequest.of(page, size);
         List<Report> reports = customReportRepository.findBy(authorId, state, sortOrder, sortField, pageable);
-        return ResponseEntity.ok(reports);
+        return ResponseEntity.ok(reports.stream()
+            .map(reportMapper::toReportResponse)
+            .collect(Collectors.toList()));
     }
 
     @PostMapping(path = "/report")
-    public ResponseEntity<Report> add(@RequestPart(value = "report") ReportDto reportDto,
+    public ResponseEntity<ReportResponse> add(@RequestPart(value = "report") ReportDto reportDto,
                                       @RequestPart(value = "file", required = false) MultipartFile file) {
         EmployeeEntity employee = employeeRepository.getByName(SecurityContextHolder.getContext().getAuthentication().getName());
         Report report = marsService.add(reportDto, employee, file);
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok(reportMapper.toReportResponse(report));
     }
 
     @GetMapping(path = "/report/{id}")
-    public ResponseEntity<Report> get(@PathVariable("id") Integer id) {
+    public ResponseEntity<ReportResponse> get(@PathVariable("id") Integer id) {
         Report report = reportRepository.findById(id).orElseThrow();
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok(reportMapper.toReportResponse(report));
     }
 
     @GetMapping(path = "/report/{id}/file")
@@ -103,30 +108,30 @@ public class MarsController {
     }
 
     @PutMapping(path = "/report/{id}")
-    public ResponseEntity<Report> edit(@PathVariable("id") Integer id, @RequestPart(value = "report") ReportDto reportDto, @RequestPart(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity<ReportResponse> edit(@PathVariable("id") Integer id, @RequestPart(value = "report") ReportDto reportDto, @RequestPart(value = "file", required = false) MultipartFile file) {
         reportDto.setId(id);
         Report edit = marsService.edit(reportDto, file);
 
         return ResponseEntity.ok()
-                .body(edit);
+                .body(reportMapper.toReportResponse(edit));
     }
 
     @PostMapping(path = "/report/{id}/approve")
-    public ResponseEntity<Report> approve(@PathVariable("id") Integer id) {
+    public ResponseEntity<ReportResponse> approve(@PathVariable("id") Integer id) {
         Report report = reportRepository.findById(id).orElseThrow();
         marsService.approve(report);
 
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok(reportMapper.toReportResponse(report));
     }
 
     @PostMapping(path = "/report/{id}/reject")
-    public ResponseEntity<Report> reject(@PathVariable("id") Integer id, @RequestBody String comment) {
+    public ResponseEntity<ReportResponse> reject(@PathVariable("id") Integer id, @RequestBody String comment) {
         Report report = reportRepository.findById(id).orElseThrow();
         report.setState(Statuses.REJECT);
         report.setComment(comment);
         report = reportRepository.save(report);
 
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok(reportMapper.toReportResponse(report));
     }
 
     @PostMapping(path = "/times")
