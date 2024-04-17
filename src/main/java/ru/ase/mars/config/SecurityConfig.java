@@ -17,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.ase.mars.entity.EmployeeEntity;
-import ru.ase.mars.enums.Roles;
 import ru.ase.mars.repository.EmployeeRepository;
 
 @Configuration
@@ -28,29 +27,8 @@ public class SecurityConfig {
 
     private EmployeeRepository employeeRepository;
 
-    private void createUsers(PasswordEncoder encoder) {
-        EmployeeEntity sci1 = new EmployeeEntity();
-        sci1.setName("sci1");
-        sci1.setPassword(encoder.encode("123"));
-        sci1.setRole(Roles.SCIENTIST);
-        employeeRepository.save(sci1);
-
-        EmployeeEntity sci2 = new EmployeeEntity();
-        sci2.setName("sci2");
-        sci2.setPassword(encoder.encode("456"));
-        sci2.setRole(Roles.SCIENTIST);
-        employeeRepository.save(sci2);
-
-        EmployeeEntity ins = new EmployeeEntity();
-        ins.setName("ins1");
-        ins.setPassword(encoder.encode("789"));
-        ins.setRole(Roles.INSPECTOR);
-        employeeRepository.save(ins);
-    }
-
     @Bean
-    public UserDetailsService user(PasswordEncoder encoder) {
-        //createUsers(encoder);
+    public UserDetailsService user() {
         return username -> {
             EmployeeEntity employee = employeeRepository.getByName(username);
             if (employee == null) {
